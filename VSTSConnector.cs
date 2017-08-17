@@ -130,7 +130,7 @@ namespace VSTSCore
             return JsonConvert.DeserializeObject<WorkItem>(this.Patch($"DefaultCollection/{project}/_apis/wit/workitems/${type}/?api-version={apiversion}", JsonConvert.SerializeObject(operations)));
         }
 
-        public WorkItem UpdateWorkItem(string project, string type, WorkItem item)
+        public WorkItem UpdateWorkItem(WorkItem item)
         {
             List<FieldOperation> operations = new List<FieldOperation>();
             foreach (var field in item.fields)
@@ -138,8 +138,9 @@ namespace VSTSCore
                 operations.Add(new FieldOperation("add", $"/fields/{field.Key}", field.Value));
             }
 
-            return JsonConvert.DeserializeObject<WorkItem>(this.Patch($"DefaultCollection/{project}/_apis/wit/workitems/{item.id}/?api-version={apiversion}", JsonConvert.SerializeObject(operations)));
+            return JsonConvert.DeserializeObject<WorkItem>(this.Patch($"DefaultCollection/_apis/wit/workitems/{item.id}/?api-version={apiversion}", JsonConvert.SerializeObject(operations)));
         }
+
         #endregion
 
         #region Work Item Comments

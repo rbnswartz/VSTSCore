@@ -62,6 +62,19 @@ namespace VSTSCore
                 return data;
             }
         }
+
+        public string Delete(string url)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes($"{this.Username}:{this.AccessToken}")));
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, $"https://{this.Account}.visualstudio.com/{url}");
+                var response = client.SendAsync(request).Result;
+                string data = response.Content.ReadAsStringAsync().Result;
+                return data;
+            }
+        }
         #endregion
 
         #region Projects
@@ -139,6 +152,10 @@ namespace VSTSCore
             }
 
             return JsonConvert.DeserializeObject<WorkItem>(this.Patch($"DefaultCollection/_apis/wit/workitems/{item.id}/?api-version={apiversion}", JsonConvert.SerializeObject(operations)));
+        }
+        public void DeleteWorkItem(WorkItem item)
+        {
+            this.Delete($"DefaultCollection/_apis/wit/workitems/{item.id}/?api-version={apiversion}");
         }
 
         #endregion

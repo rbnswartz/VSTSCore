@@ -221,5 +221,27 @@ namespace VSTSCore
             return JsonConvert.DeserializeObject<WorkItemField>(this.Get($"/DefaultCollection/_apis/wit/fields/{fieldName}&api-version={apiversion}"));
         }
         #endregion
+
+        #region repository
+        public List<GitRepository> GetGitRepositoriesForProject(Guid projectId)
+        {
+            return JsonConvert.DeserializeObject<VSTSResponse<GitRepository>>(this.Get($"/DefaultCollection/{projectId}/_apis/git/repositories?api-version={apiversion}")).value;
+        }
+
+        public List<GitRepository> GetAllGitRepositories()
+        {
+            return JsonConvert.DeserializeObject<VSTSResponse<GitRepository>>(this.Get($"/DefaultCollection/_apis/git/repositories?api-version={apiversion}")).value;
+        }
+
+        public GitRepository GetGitRepository(Guid projectId, Guid repositoryId)
+        {
+            return JsonConvert.DeserializeObject<GitRepository>(this.Get($"/DefaultCollection/{projectId}/_apis/git/repositories/{repositoryId}?api-version={apiversion}"));
+        }
+
+        public GitRepository GetGitRepositoryByUrl(string gitCloneUrl)
+        {
+            return JsonConvert.DeserializeObject<GitRepository>(this.Get(gitCloneUrl.Replace($"https://{this.Account}.visualstudio.com/","") + "/vsts/info"));
+        }
+        #endregion
     }
 }

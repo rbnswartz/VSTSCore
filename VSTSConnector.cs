@@ -104,7 +104,7 @@ namespace VSTSCore
             object postData = new { query = workItemQuery };
             return JsonConvert.DeserializeObject<WIQLResult>(this.Post($"/DefaultCollection/{projectId.ToString()}/_apis/wit/wiql?api-version={this.apiversion}", JsonConvert.SerializeObject(postData)));
         }
-        public List<WorkItem> GetWorkItems(List<string> ids, List<string> fields, DateTime asOf = new DateTime())
+        public List<WorkItem> GetWorkItems(List<int> ids, List<string> fields, DateTime asOf = new DateTime())
         {
             if (ids.Count == 0)
             {
@@ -119,6 +119,16 @@ namespace VSTSCore
                 return JsonConvert.DeserializeObject<VSTSResponse<WorkItem>>(this.Get($"/DefaultCollection/_apis/wit/WorkItems?ids={string.Join(",", ids)}&asOf={asOf.ToUniversalTime()}&api-version={apiversion}")).value;
             }
             return JsonConvert.DeserializeObject<VSTSResponse<WorkItem>>(this.Get($"/DefaultCollection/_apis/wit/WorkItems?ids={string.Join(",", ids)}&fields={string.Join(",", fields)}&asOf={asOf.ToUniversalTime()}&api-version={apiversion}")).value;
+        }
+
+        public List<WorkItem> GetWorkItems(List<WorkItem> workitems, List<string> fields, DateTime asOf = new DateTime())
+        {
+            List<int> workItemIds = new List<int>();
+            foreach(WorkItem i in workitems)
+            {
+                workItemIds.Add(i.id);
+            }
+            return GetWorkItems(workItemIds,fields,asOf);
         }
 
         public WorkItem CreateWorkItem(Guid projectId, string type, WorkItem item)
@@ -242,6 +252,8 @@ namespace VSTSCore
         {
             return JsonConvert.DeserializeObject<GitRepository>(this.Get(gitCloneUrl.Replace($"https://{this.Account}.visualstudio.com/","") + "/vsts/info"));
         }
+        #endregion
+        #region Pull Requests
         #endregion
     }
 }
